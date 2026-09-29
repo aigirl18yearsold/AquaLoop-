@@ -3,318 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AquaLoop | Smarter Water, Better Future</title>
+  <meta name="theme-color" content="#087f8c">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  <title>AquaLoop — Measure. Understand. Reduce.</title>
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4fbfc;
-      color: #12343b;
-      line-height: 1.6;
-    }
-
-    header {
-      background: white;
-      padding: 18px 7%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-bottom: 1px solid #dceff2;
-    }
-
-    .logo {
-      font-size: 25px;
-      font-weight: 800;
-      color: #087f8c;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #31545a;
-      margin-left: 20px;
-      font-weight: 600;
-    }
-
-    .hero {
-      min-height: 82vh;
-      padding: 80px 7%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 50px;
-      background: linear-gradient(135deg, #e8fbfd, #ffffff);
-    }
-
-    .hero-text {
-      max-width: 650px;
-    }
-
-    .hero h1 {
-      font-size: clamp(42px, 7vw, 72px);
-      line-height: 1.05;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 span {
-      color: #0796a5;
-    }
-
-    .hero p {
-      font-size: 19px;
-      color: #527077;
-      margin-bottom: 30px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 14px 23px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .primary {
-      background: #078b99;
-      color: white;
-    }
-
-    .secondary {
-      border: 2px solid #078b99;
-      color: #078b99;
-      background: white;
-    }
-
-    .water-circle {
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #0ba8ba, #056d91);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 90px;
-      box-shadow: 0 25px 60px rgba(5, 109, 145, .25);
-      flex-shrink: 0;
-    }
-
-    section {
-      padding: 75px 7%;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .section-title h2 {
-      font-size: 38px;
-      margin-bottom: 10px;
-    }
-
-    .section-title p {
-      color: #668087;
-    }
-
-    /* DASHBOARD */
-
-    .dashboard {
-      background: white;
-      max-width: 900px;
-      margin: auto;
-      padding: 35px;
-      border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.06);
-      border: 1px solid #dceff2;
-    }
-
-    .input-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
-    label {
-      display: block;
-      font-weight: 700;
-      margin-bottom: 7px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #c9dfe3;
-      border-radius: 9px;
-      font-size: 16px;
-    }
-
-    .calculate {
-      margin-top: 25px;
-      width: 100%;
-      padding: 15px;
-      background: #078b99;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .results {
-      display: none;
-      margin-top: 30px;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-
-    .result {
-      background: #effbfd;
-      padding: 22px;
-      border-radius: 15px;
-      text-align: center;
-    }
-
-    .result strong {
-      display: block;
-      font-size: 30px;
-      color: #078b99;
-    }
-
-    .message {
-      margin-top: 20px;
-      padding: 18px;
-      border-radius: 12px;
-      background: #e8f7ed;
-      color: #23643b;
-      font-weight: 600;
-    }
-
-    /* CARDS */
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-    }
-
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 18px;
-      border: 1px solid #dceff2;
-      box-shadow: 0 8px 30px rgba(0,0,0,.04);
-    }
-
-    .icon {
-      font-size: 38px;
-      margin-bottom: 15px;
-    }
-
-    .card h3 {
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      color: #647b80;
-    }
-
-    .impact {
-      background: #073f50;
-      color: white;
-      text-align: center;
-    }
-
-    .impact p {
-      color: #c9e6eb;
-      max-width: 700px;
-      margin: 15px auto 30px;
-    }
-
-    .stats {
-      display: flex;
-      justify-content: center;
-      gap: 70px;
-      flex-wrap: wrap;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 35px;
-    }
-
-    .stat span {
-      color: #b8dbe0;
-    }
-
-    footer {
-      background: #032d38;
-      color: #a9c9ce;
-      text-align: center;
-      padding: 25px;
-    }
-
-    @media(max-width:800px) {
-
-      nav {
-        display: none;
-      }
-
-      .hero {
-        flex-direction: column;
-        text-align: center;
-        padding-top: 55px;
-      }
-
-      .water-circle {
-        width: 220px;
-        height: 220px;
-        font-size: 65px;
-      }
-
-      .cards,
-      .input-grid,
-      .result-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .dashboard {
-        padding: 22px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-  <div class="logo">💧 AquaLoop</div>
+<header class="navbar">
+
+  <a href="#" class="brand">
+    <span>💧</span>
+    AquaLoop
+  </a>
 
   <nav>
-    <a href="#about">About</a>
     <a href="#dashboard">Dashboard</a>
-    <a href="#solutions">Solutions</a>
+    <a href="#calculator">Calculate</a>
+    <a href="#history">History</a>
+    <a href="#goals">Goals</a>
   </nav>
+
 </header>
 
 
@@ -324,94 +35,40 @@
 
   <section class="hero">
 
-    <div class="hero-text">
+    <div class="hero-content">
+
+      <span class="eyebrow">
+        WATER INTELLIGENCE
+      </span>
 
       <h1>
-        Every Drop Has a
-        <span>Future.</span>
+        Measure.
+        <span>Understand.</span>
+        Reduce.
       </h1>
 
       <p>
-        AquaLoop helps people understand their water consumption,
-        identify waste, and take practical steps toward smarter
-        water use.
+        AquaLoop helps you understand everyday water use,
+        identify the biggest sources of consumption, and
+        make practical conservation decisions.
       </p>
 
-      <div class="buttons">
-
-        <a href="#dashboard" class="btn primary">
-          Check My Water Use
-        </a>
-
-        <a href="#about" class="btn secondary">
-          Learn More
-        </a>
-
-      </div>
+      <a href="#calculator" class="button primary">
+        Calculate My Water Use →
+      </a>
 
     </div>
 
-    <div class="water-circle">
-      💧
-    </div>
+    <div class="hero-visual">
 
-  </section>
+      <div class="water-orbit">
 
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
 
-  <!-- ABOUT -->
-
-  <section id="about">
-
-    <div class="section-title">
-
-      <h2>Why AquaLoop?</h2>
-
-      <p>
-        Water conservation starts with understanding how we use water.
-      </p>
-
-    </div>
-
-    <div class="cards">
-
-      <div class="card">
-
-        <div class="icon">🌊</div>
-
-        <h3>Understand</h3>
-
-        <p>
-          See how everyday activities contribute to your overall
-          water consumption.
-        </p>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="icon">📊</div>
-
-        <h3>Measure</h3>
-
-        <p>
-          Turn simple household information into understandable
-          water-use estimates.
-        </p>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="icon">♻️</div>
-
-        <h3>Improve</h3>
-
-        <p>
-          Get practical ideas for reducing unnecessary water
-          consumption.
-        </p>
+        <div class="water-core">
+          💧
+        </div>
 
       </div>
 
@@ -422,83 +79,196 @@
 
   <!-- DASHBOARD -->
 
-  <section id="dashboard">
+  <section id="dashboard" class="section">
 
-    <div class="section-title">
+    <div class="section-heading">
 
-      <h2>💧 My Water Dashboard</h2>
+      <span class="eyebrow">
+        YOUR OVERVIEW
+      </span>
+
+      <h2>Your Water Dashboard</h2>
 
       <p>
-        Enter your daily activities to estimate your water use.
+        Your latest AquaLoop information at a glance.
       </p>
 
     </div>
 
 
-    <div class="dashboard">
+    <div class="dashboard-grid">
+
+      <div class="stat-card">
+
+        <span class="stat-icon">💧</span>
+
+        <span class="stat-label">
+          Latest daily estimate
+        </span>
+
+        <strong id="dashboardDaily">
+          —
+        </strong>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <span class="stat-icon">🔎</span>
+
+        <span class="stat-label">
+          Largest source
+        </span>
+
+        <strong id="dashboardSource">
+          —
+        </strong>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <span class="stat-icon">🎯</span>
+
+        <span class="stat-label">
+          Goal
+        </span>
+
+        <strong id="dashboardGoal">
+          —
+        </strong>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <span class="stat-icon">📈</span>
+
+        <span class="stat-label">
+          Saved records
+        </span>
+
+        <strong id="dashboardRecords">
+          0
+        </strong>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CALCULATOR -->
+
+  <section id="calculator" class="section calculator-section">
+
+    <div class="section-heading">
+
+      <span class="eyebrow">
+        ESTIMATE YOUR USE
+      </span>
+
+      <h2>Water Use Calculator</h2>
+
+      <p>
+        Enter your typical daily activities.
+      </p>
+
+    </div>
+
+
+    <div class="calculator-card">
 
       <div class="input-grid">
 
-        <div>
+        <div class="input-group">
 
           <label for="shower">
-            Shower time (minutes)
+            🚿 Shower time
           </label>
 
-          <input
-            id="shower"
-            type="number"
-            min="0"
-            placeholder="Example: 10"
-          >
+          <div class="input-with-unit">
+
+            <input
+              id="shower"
+              type="number"
+              min="0"
+              placeholder="10"
+            >
+
+            <span>min</span>
+
+          </div>
 
         </div>
 
 
-        <div>
+        <div class="input-group">
 
           <label for="toilet">
-            Toilet flushes
+            🚽 Toilet flushes
           </label>
 
-          <input
-            id="toilet"
-            type="number"
-            min="0"
-            placeholder="Example: 5"
-          >
+          <div class="input-with-unit">
+
+            <input
+              id="toilet"
+              type="number"
+              min="0"
+              placeholder="5"
+            >
+
+            <span>flushes</span>
+
+          </div>
 
         </div>
 
 
-        <div>
+        <div class="input-group">
 
-          <label for="washing">
-            Laundry loads
+          <label for="laundry">
+            👕 Laundry
           </label>
 
-          <input
-            id="washing"
-            type="number"
-            min="0"
-            placeholder="Example: 1"
-          >
+          <div class="input-with-unit">
+
+            <input
+              id="laundry"
+              type="number"
+              min="0"
+              placeholder="1"
+            >
+
+            <span>loads</span>
+
+          </div>
 
         </div>
 
 
-        <div>
+        <div class="input-group">
 
           <label for="dishes">
-            Dishwashing (minutes)
+            🍽️ Dishwashing
           </label>
 
-          <input
-            id="dishes"
-            type="number"
-            min="0"
-            placeholder="Example: 10"
-          >
+          <div class="input-with-unit">
+
+            <input
+              id="dishes"
+              type="number"
+              min="0"
+              placeholder="10"
+            >
+
+            <span>min</span>
+
+          </div>
 
         </div>
 
@@ -506,56 +276,185 @@
 
 
       <button
-        class="calculate"
+        class="button primary calculate-button"
         onclick="calculateWater()"
       >
-        Calculate My Water Use
+        Analyze My Water Use
       </button>
 
 
-      <div class="results" id="results">
+      <p class="estimate-note">
+        AquaLoop provides simplified estimates for this prototype.
+        Actual water consumption varies by appliance, fixture,
+        household, and behavior.
+      </p>
 
-        <div class="result-grid">
 
-          <div class="result">
+      <!-- RESULTS -->
 
-            <strong id="daily">
+      <div id="results" class="results hidden">
+
+        <div class="result-summary">
+
+          <div>
+
+            <span>Estimated daily use</span>
+
+            <strong id="dailyResult">
               0 L
             </strong>
-
-            Daily estimate
 
           </div>
 
 
-          <div class="result">
+          <div>
 
-            <strong id="weekly">
+            <span>Weekly projection</span>
+
+            <strong id="weeklyResult">
               0 L
             </strong>
-
-            Weekly estimate
 
           </div>
 
 
-          <div class="result">
+          <div>
 
-            <strong id="monthly">
+            <span>Monthly projection</span>
+
+            <strong id="monthlyResult">
               0 L
             </strong>
-
-            Monthly estimate
 
           </div>
 
         </div>
 
 
-        <div
-          class="message"
-          id="message"
-        ></div>
+        <!-- BREAKDOWN -->
+
+        <div class="analysis">
+
+          <div class="analysis-header">
+
+            <div>
+
+              <span class="eyebrow">
+                ANALYSIS
+              </span>
+
+              <h3>Where is your water going?</h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="activity">
+
+            <div class="activity-label">
+
+              <span>🚿 Shower</span>
+
+              <strong id="showerValue">
+                0 L
+              </strong>
+
+            </div>
+
+            <div class="bar-track">
+              <div id="showerBar" class="bar"></div>
+            </div>
+
+          </div>
+
+
+          <div class="activity">
+
+            <div class="activity-label">
+
+              <span>🚽 Toilet</span>
+
+              <strong id="toiletValue">
+                0 L
+              </strong>
+
+            </div>
+
+            <div class="bar-track">
+              <div id="toiletBar" class="bar"></div>
+            </div>
+
+          </div>
+
+
+          <div class="activity">
+
+            <div class="activity-label">
+
+              <span>👕 Laundry</span>
+
+              <strong id="laundryValue">
+                0 L
+              </strong>
+
+            </div>
+
+            <div class="bar-track">
+              <div id="laundryBar" class="bar"></div>
+            </div>
+
+          </div>
+
+
+          <div class="activity">
+
+            <div class="activity-label">
+
+              <span>🍽️ Dishes</span>
+
+              <strong id="dishesValue">
+                0 L
+              </strong>
+
+            </div>
+
+            <div class="bar-track">
+              <div id="dishesBar" class="bar"></div>
+            </div>
+
+          </div>
+
+
+          <div class="recommendation">
+
+            <span class="recommendation-icon">
+              💡
+            </span>
+
+            <div>
+
+              <strong>
+                AquaLoop Insight
+              </strong>
+
+              <p id="recommendationText">
+                Your recommendation will appear here.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="button secondary save-button"
+          onclick="saveRecord()"
+        >
+          Save This Record
+        </button>
 
       </div>
 
@@ -564,60 +463,82 @@
   </section>
 
 
-  <!-- SOLUTIONS -->
+  <!-- GOALS -->
 
-  <section id="solutions">
+  <section id="goals" class="section">
 
-    <div class="section-title">
+    <div class="section-heading">
 
-      <h2>What AquaLoop Can Become</h2>
+      <span class="eyebrow">
+        CONSERVATION GOAL
+      </span>
+
+      <h2>Set Your Reduction Target</h2>
 
       <p>
-        The calculator is only the beginning.
+        Choose how much you want to reduce your estimated water use.
       </p>
 
     </div>
 
 
-    <div class="cards">
+    <div class="goal-card">
 
-      <div class="card">
+      <div class="goal-input">
 
-        <div class="icon">📈</div>
+        <label for="goal">
+          Reduction target
+        </label>
 
-        <h3>Personal Dashboard</h3>
+        <div class="goal-control">
 
-        <p>
-          Track water-use trends over time and see whether
-          conservation efforts are working.
-        </p>
+          <input
+            id="goal"
+            type="number"
+            min="1"
+            max="90"
+            value="10"
+          >
+
+          <span>%</span>
+
+          <button
+            class="button primary"
+            onclick="setGoal()"
+          >
+            Set Goal
+          </button>
+
+        </div>
 
       </div>
 
 
-      <div class="card">
+      <div class="goal-progress">
 
-        <div class="icon">🤖</div>
+        <div class="progress-heading">
 
-        <h3>Smart Recommendations</h3>
+          <span>
+            Progress
+          </span>
 
-        <p>
-          Generate personalized suggestions based on
-          a user's water-use pattern.
-        </p>
+          <strong id="progressText">
+            0%
+          </strong>
 
-      </div>
+        </div>
 
+        <div class="progress-track">
 
-      <div class="card">
+          <div
+            id="progressBar"
+            class="progress-bar"
+          ></div>
 
-        <div class="icon">🌍</div>
+        </div>
 
-        <h3>Community Impact</h3>
-
-        <p>
-          Connect individual actions with larger community
-          water-conservation goals.
+        <p id="goalMessage">
+          Calculate and save your water use to begin tracking.
         </p>
 
       </div>
@@ -627,54 +548,103 @@
   </section>
 
 
-  <!-- IMPACT -->
+  <!-- HISTORY -->
 
-  <section class="impact">
+  <section id="history" class="section">
 
-    <div class="section-title">
+    <div class="section-heading">
 
-      <h2>Small Changes. Bigger Loops.</h2>
+      <span class="eyebrow">
+        YOUR RECORDS
+      </span>
+
+      <h2>Recent Water History</h2>
 
       <p>
-        AquaLoop aims to turn awareness into measurable action.
+        Records are stored locally on this device.
       </p>
 
     </div>
 
 
-    <div class="stats">
+    <div id="historyList" class="history-list">
 
-      <div class="stat">
+      <div class="empty-history">
 
-        <strong>💧</strong>
+        <span>💧</span>
 
-        <span>
-          Protect Water
-        </span>
+        <h3>No records yet</h3>
 
-      </div>
-
-
-      <div class="stat">
-
-        <strong>♻️</strong>
-
-        <span>
-          Reduce Waste
-        </span>
+        <p>
+          Calculate your water use and save your first record.
+        </p>
 
       </div>
 
+    </div>
 
-      <div class="stat">
+  </section>
 
-        <strong>🌱</strong>
 
-        <span>
-          Build Resilience
-        </span>
+  <!-- PRODUCT -->
 
-      </div>
+  <section class="section product-section">
+
+    <div class="section-heading">
+
+      <span class="eyebrow">
+        THE IDEA
+      </span>
+
+      <h2>Small changes. Bigger loops.</h2>
+
+      <p>
+        AquaLoop turns everyday water information into
+        understandable actions.
+      </p>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+      <article class="feature-card">
+
+        <span>📊</span>
+
+        <h3>Measure</h3>
+
+        <p>
+          Estimate where your everyday water use is going.
+        </p>
+
+      </article>
+
+
+      <article class="feature-card">
+
+        <span>🔎</span>
+
+        <h3>Understand</h3>
+
+        <p>
+          Identify the activity contributing most to your estimate.
+        </p>
+
+      </article>
+
+
+      <article class="feature-card">
+
+        <span>♻️</span>
+
+        <h3>Reduce</h3>
+
+        <p>
+          Turn the insight into a practical conservation action.
+        </p>
+
+      </article>
 
     </div>
 
@@ -685,97 +655,22 @@
 
 <footer>
 
-  © 2026 AquaLoop — Smarter water starts with better decisions.
+  <div class="footer-brand">
+    💧 AquaLoop
+  </div>
+
+  <p>
+    Measure. Understand. Reduce.
+  </p>
+
+  <small>
+    © 2026 AquaLoop. Prototype estimates are not direct measurements.
+  </small>
 
 </footer>
 
 
-<script>
-
-function calculateWater() {
-
-  const shower =
-    Number(document.getElementById("shower").value) || 0;
-
-  const toilet =
-    Number(document.getElementById("toilet").value) || 0;
-
-  const washing =
-    Number(document.getElementById("washing").value) || 0;
-
-  const dishes =
-    Number(document.getElementById("dishes").value) || 0;
-
-
-  /*
-    These are simplified estimates for the prototype.
-    They are NOT measurements of a specific household.
-  */
-
-  const showerWater = shower * 9;
-
-  const toiletWater = toilet * 6;
-
-  const laundryWater = washing * 60;
-
-  const dishWater = dishes * 6;
-
-
-  const daily =
-    showerWater +
-    toiletWater +
-    laundryWater +
-    dishWater;
-
-
-  const weekly = daily * 7;
-
-  const monthly = daily * 30;
-
-
-  document.getElementById("daily").textContent =
-    Math.round(daily) + " L";
-
-  document.getElementById("weekly").textContent =
-    Math.round(weekly) + " L";
-
-  document.getElementById("monthly").textContent =
-    Math.round(monthly) + " L";
-
-
-  let message = "";
-
-
-  if (daily === 0) {
-
-    message =
-      "Enter your daily activities above to generate an estimate.";
-
-  } else if (daily < 100) {
-
-    message =
-      "Your estimated use is relatively low. Keep looking for ways to reduce unnecessary water use.";
-
-  } else if (daily < 200) {
-
-    message =
-      "There may be opportunities to reduce your water footprint. Try shortening showers or improving laundry and dishwashing habits.";
-
-  } else {
-
-    message =
-      "Your estimated use is high enough to investigate. Start by identifying which activity contributes the most.";
-
-  }
-
-
-  document.getElementById("message").textContent = message;
-
-  document.getElementById("results").style.display = "block";
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
   </html>
