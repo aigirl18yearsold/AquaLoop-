@@ -1,683 +1,416 @@
-// ============================================
 // AquaLoop
-// Main application logic
-// ============================================
-
-
-// Simplified prototype estimates.
-// These should be replaced with validated
-// regional/fixture-specific data in a later version.
+// Measure. Understand. Reduce.
 
 const RATES = {
-  shower: 9,
-  toilet: 6,
-  laundry: 60,
-  dishes: 6
+  shower: 9,   // liters per minute
+  toilet: 6,   // liters per flush
+  laundry: 60, // liters per load
+  dishes: 6    // liters per minute
 };
 
-
-// Current calculation
-
-let currentCalculation = null;
-
-
-// --------------------------------------------
-// Helpers
-// --------------------------------------------
-
-function getNumber(id) {
-
-  const value = Number(
-    document.getElementById(id).value
-  );
-
-  return Number.isFinite(value) && value >= 0
-    ? value
-    : 0;
-}
-
-
-function formatLitres(value) {
-
-  return Math.round(value) + " L";
-
-}
-
+const RECORDS_KEY = "aquaLoopRecords";
+const GOAL_KEY = "aquaLoopGoal";
 
 function getRecords() {
-
   try {
-
-    return JSON.parse(
-      localStorage.getItem("aquaLoopRecords") || "[]"
-    );
-
+    return JSON.parse(localStorage.getItem(RECORDS_KEY)) || [];
   } catch {
-
     return [];
-
   }
-
 }
 
+function saveRecords(records) {
+  localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+}
 
 function getGoal() {
-
-  return Number(
-    localStorage.getItem("aquaLoopGoal") || 0
-  );
-
+  return Number(localStorage.getItem(GOAL_KEY)) || 20;
 }
 
+function calculateUsage() {
+  const shower =
+    Number(document.getElementById("shower")?.value) || 0;
 
-// --------------------------------------------
-// Water calculation
-// --------------------------------------------
+  const toilet =
+    Number(document.getElementById("toilet")?.value) || 0;
 
-function calculateWater() {
+  const laundry =
+    Number(document.getElementById("laundry")?.value) || 0;
 
-  const showerMinutes = getNumber("shower");
+  const dishes =
+    Number(document.getElementById("dishes")?.value) || 0;
 
-  const toiletFlushes = getNumber("toilet");
-
-  const laundryLoads = getNumber("laundry");
-
-  const dishMinutes = getNumber("dishes");
-
-
-  const showerWater =
-    showerMinutes * RATES.shower;
-
-  const toiletWater =
-    toiletFlushes * RATES.toilet;
-
-  const laundryWater =
-    laundryLoads * RATES.laundry;
-
-  const dishesWater =
-    dishMinutes * RATES.dishes;
-
+  const usage = {
+    shower: shower * RATES.shower,
+    toilet: toilet * RATES.toilet,
+    laundry: laundry * RATES.laundry,
+    dishes: dishes * RATES.dishes
+  };
 
   const total =
-    showerWater +
-    toiletWater +
-    laundryWater +
-    dishesWater;
+    usage.shower +
+    usage.toilet +
+    usage.laundry +
+    usage.dishes;
 
+  return {
+    ...usage,
+    total
+  };
+}
 
-  if (total <= 0) {
+function formatLiters(value) {
+  return `${Math.round(value)} L`;
+}
 
-    alert(
-      "Please enter at least one activity."
-    );
+function updateResults() {
+  const usage = calculateUsage();
 
+  const daily = usage.total;
+  const weekly = daily * 7;
+  const monthly = daily * 30;
+
+  const dailyElement = document.getElementById("dailyResult");
+  const weeklyElement = document.getElementById("weeklyResult");
+  const monthlyElement = document.getElementById("monthlyResult");
+
+  if (dailyElement) dailyElement.textContent = formatLiters(daily);
+  if (weeklyElement) weeklyElement.textContent = formatLiters(weekly);
+  if (monthlyElement) monthlyElement.textContent = formatLiters(monthly);
+
+  updateBreakdown(usage);
+  updateRecommendation(usage);
+  updateDashboard(usage);
+
+  return usage;
+}
+
+function updateBreakdown(usage) {
+  const items = [
+    { name: "shower", value: usage.shower },
+    { name: "toilet", value: usage.toilet },
+    { name: "laundry", value: usage.laundry },
+    { name: "dishes", value: usage.dishes }
+  ];
+
+  const largest = Math.max(...items.map(item => item.value));
+
+  items.forEach(item => {
+    const bar = document.getElementById(`${item.name}Bar`);
+    const value = document.getElementById(`${item.name}Value`);
+
+    if (value) {
+      value.textContent = formatLiters(item.value);
+    }
+
+    if (bar) {
+      const percentage =
+        largest > 0 ? (item.value / largest) * 100 : 0;
+
+      bar.style.width = `${percentage}%`;
+    }
+  });
+}
+
+function updateRecommendation(usage) {
+  const recommendation =
+    document.getElementById("recommendation");
+
+  if (!recommendation) return;
+
+  const sources = [
+    ["shower", usage.shower],
+    ["toilet", usage.toilet],
+    ["laundry", usage.laundry],
+    ["dishes", usage.dishes]
+  ];
+
+  sources.sort((a, b) => b[1] - a[1]);
+
+  const largest = sources[0];
+
+  if (usage.total === 0) {
+    recommendation.textContent =
+      "Enter your daily activities above to receive a personalized water-saving recommendation.";
     return;
-
   }
 
-
-  const activities = {
-
-    shower: showerWater,
-
-    toilet: toiletWater,
-
-    laundry: laundryWater,
-
-    dishes: dishesWater
-
-  };
-
-
-  const biggest =
-    Object.entries(activities)
-      .sort((a, b) => b[1] - a[1])[0];
-
-
-  currentCalculation = {
-
-    daily: total,
-
-    weekly: total * 7,
-
-    monthly: total * 30,
-
-    activities: activities,
-
-    biggest: biggest[0],
-
-    date: new Date().toLocaleDateString()
-
-  };
-
-
-  displayResults();
-
-}
-
-
-// --------------------------------------------
-// Display calculation
-// --------------------------------------------
-
-function displayResults() {
-
-  if (!currentCalculation) return;
-
-
-  const data = currentCalculation;
-
-
-  document.getElementById("results")
-    .classList.remove("hidden");
-
-
-  document.getElementById("dailyResult")
-    .textContent = formatLitres(data.daily);
-
-
-  document.getElementById("weeklyResult")
-    .textContent = formatLitres(data.weekly);
-
-
-  document.getElementById("monthlyResult")
-    .textContent = formatLitres(data.monthly);
-
-
-  document.getElementById("showerValue")
-    .textContent =
-    formatLitres(data.activities.shower);
-
-
-  document.getElementById("toiletValue")
-    .textContent =
-    formatLitres(data.activities.toilet);
-
-
-  document.getElementById("laundryValue")
-    .textContent =
-    formatLitres(data.activities.laundry);
-
-
-  document.getElementById("dishesValue")
-    .textContent =
-    formatLitres(data.activities.dishes);
-
-
-  const total = data.daily;
-
-
-  setBar(
-    "showerBar",
-    data.activities.shower,
-    total
-  );
-
-
-  setBar(
-    "toiletBar",
-    data.activities.toilet,
-    total
-  );
-
-
-  setBar(
-    "laundryBar",
-    data.activities.laundry,
-    total
-  );
-
-
-  setBar(
-    "dishesBar",
-    data.activities.dishes,
-    total
-  );
-
-
-  const sourceNames = {
-
-    shower: "showering",
-
-    toilet: "toilet use",
-
-    laundry: "laundry",
-
-    dishes: "dishwashing"
-
-  };
-
-
-  document.getElementById("recommendationText")
-    .textContent =
-    createRecommendation(
-      data.biggest,
-      data.activities[data.biggest]
-    );
-
-
-  updateDashboard();
-
-}
-
-
-// --------------------------------------------
-// Progress bars
-// --------------------------------------------
-
-function setBar(id, value, total) {
-
-  const percentage =
-    total > 0
-      ? (value / total) * 100
-      : 0;
-
-
-  document.getElementById(id)
-    .style.width =
-    Math.min(percentage, 100) + "%";
-
-}
-
-
-// --------------------------------------------
-// Recommendations
-// --------------------------------------------
-
-function createRecommendation(source, value) {
-
-  const recommendations = {
-
+  const messages = {
     shower:
-      "Showering is your largest estimated source at " +
-      formatLitres(value) +
-      "/day. Try reducing shower time by a few minutes " +
-      and avoid leaving water running unnecessarily.",
-
+      "Your shower is your largest estimated water source. Try reducing shower time by a few minutes.",
     toilet:
-      "Toilet use is your largest estimated source at " +
-      formatLitres(value) +
-      "/day. Water-efficient fixtures and avoiding " +
-      unnecessary flushing can help.",
-
+      "Your toilet use is your largest estimated source. Consider reducing unnecessary flushes.",
     laundry:
-      "Laundry is your largest estimated source at " +
-      formatLitres(value) +
-      "/day. Fuller loads can reduce the estimated " +
-      water used per item.",
-
+      "Laundry is your largest estimated source. Running fuller loads can help reduce water use.",
     dishes:
-      "Dishwashing is your largest estimated source at " +
-      formatLitres(value) +
-      "/day. Avoid leaving the tap running continuously."
-
+      "Dishwashing is your largest estimated source. Try reducing running-water time while washing."
   };
 
-
-  return recommendations[source];
-
+  recommendation.textContent = messages[largest[0]];
 }
 
+function updateDashboard(usage) {
+  const latestDaily =
+    document.getElementById("latestDaily");
 
-// --------------------------------------------
-// Save record
-// --------------------------------------------
-
-function saveRecord() {
-
-  if (!currentCalculation) {
-
-    alert(
-      "Calculate your water use first."
-    );
-
-    return;
-
-  }
-
-
-  const records = getRecords();
-
-
-  records.unshift(currentCalculation);
-
-
-  // Keep only the latest 20 records.
-
-  const limited =
-    records.slice(0, 20);
-
-
-  localStorage.setItem(
-    "aquaLoopRecords",
-    JSON.stringify(limited)
-  );
-
-
-  renderHistory();
-
-  updateDashboard();
-
-  updateGoalProgress();
-
-
-  alert(
-    "Your AquaLoop record has been saved."
-  );
-
-}
-
-
-// --------------------------------------------
-// History
-// --------------------------------------------
-
-function renderHistory() {
-
-  const list =
-    document.getElementById("historyList");
-
+  const largestSource =
+    document.getElementById("largestSource");
 
   const records =
     getRecords();
 
-
-  if (records.length === 0) {
-
-    list.innerHTML = `
-
-      <div class="empty-history">
-
-        <span>💧</span>
-
-        <h3>No records yet</h3>
-
-        <p>
-          Calculate your water use and save your first record.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
+  if (latestDaily) {
+    latestDaily.textContent = formatLiters(usage.total);
   }
 
+  if (largestSource) {
+    const sources = [
+      ["Shower", usage.shower],
+      ["Toilet", usage.toilet],
+      ["Laundry", usage.laundry],
+      ["Dishes", usage.dishes]
+    ];
 
-  list.innerHTML =
-    records.map((record, index) => `
+    sources.sort((a, b) => b[1] - a[1]);
 
-      <div class="history-item">
-
-        <div>
-
-          <strong>
-            ${formatLitres(record.daily)}
-          </strong>
-
-          <small>
-            ${record.date}
-          </small>
-
-        </div>
-
-        <div>
-
-          <small>
-            Largest source:
-            ${getReadableSource(record.biggest)}
-          </small>
-
-        </div>
-
-      </div>
-
-    `).join("");
-
-}
-
-
-// --------------------------------------------
-// Goal
-// --------------------------------------------
-
-function setGoal() {
-
-  const goal =
-    Number(
-      document.getElementById("goal").value
-    );
-
-
-  if (
-    !Number.isFinite(goal) ||
-    goal < 1 ||
-    goal > 90
-  ) {
-
-    alert(
-      "Choose a goal between 1% and 90%."
-    );
-
-    return;
-
+    largestSource.textContent =
+      usage.total > 0 ? sources[0][0] : "—";
   }
 
+  const recordsElement =
+    document.getElementById("recordCount");
 
-  localStorage.setItem(
-    "aquaLoopGoal",
-    goal
-  );
+  if (recordsElement) {
+    recordsElement.textContent = records.length;
+  }
 
-
-  updateGoalProgress();
-
-  updateDashboard();
-
+  updateGoalDisplay();
 }
 
+function saveCurrentRecord() {
+  const usage = calculateUsage();
 
-// --------------------------------------------
-// Goal progress
-// --------------------------------------------
-
-function updateGoalProgress() {
-
-  const goal = getGoal();
+  if (usage.total <= 0) {
+    alert("Please enter your water-use activities first.");
+    return;
+  }
 
   const records = getRecords();
 
+  const record = {
+    date: new Date().toLocaleString(),
+    daily: usage.total,
+    shower: usage.shower,
+    toilet: usage.toilet,
+    laundry: usage.laundry,
+    dishes: usage.dishes
+  };
 
-  if (!goal || records.length < 1) {
+  records.unshift(record);
 
-    document.getElementById("progressText")
-      .textContent = "0%";
+  // Keep the latest 20 records
+  saveRecords(records.slice(0, 20));
 
-    document.getElementById("progressBar")
-      .style.width = "0%";
+  renderHistory();
+  updateDashboard(usage);
 
-    document.getElementById("goalMessage")
-      .textContent =
-      "Calculate and save your water use to begin tracking.";
+  alert("Your AquaLoop record has been saved.");
+}
 
+function renderHistory() {
+  const history =
+    document.getElementById("history");
+
+  if (!history) return;
+
+  const records = getRecords();
+
+  if (records.length === 0) {
+    history.innerHTML =
+      "<p>No saved records yet.</p>";
     return;
-
   }
 
+  history.innerHTML = records
+    .map(record => {
+      return `
+        <div class="history-item">
+          <div>
+            <strong>${formatLiters(record.daily)}</strong>
+            <small>${record.date}</small>
+          </div>
+          <div class="history-details">
+            Shower: ${formatLiters(record.shower)} ·
+            Toilet: ${formatLiters(record.toilet)} ·
+            Laundry: ${formatLiters(record.laundry)} ·
+            Dishes: ${formatLiters(record.dishes)}
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
 
-  if (records.length === 1) {
+function setGoal() {
+  const input =
+    document.getElementById("goalInput");
 
-    document.getElementById("progressText")
-      .textContent = "0%";
+  if (!input) return;
 
-    document.getElementById("progressBar")
-      .style.width = "0%";
+  let goal = Number(input.value);
 
-    document.getElementById("goalMessage")
-      .textContent =
-      "Your first saved record is your baseline. Save another record later to measure change.";
-
+  if (!goal || goal < 1 || goal > 90) {
+    alert("Please enter a goal between 1% and 90%.");
     return;
-
   }
 
+  localStorage.setItem(GOAL_KEY, goal);
 
-  const latest =
-    records[0].daily;
+  updateGoalDisplay();
 
-  const previous =
-    records[1].daily;
+  alert(`Your AquaLoop goal is now ${goal}% reduction.`);
+}
 
+function updateGoalDisplay() {
+  const goal = getGoal();
 
-  if (previous <= 0) return;
+  const goalElement =
+    document.getElementById("goalValue");
 
+  if (goalElement) {
+    goalElement.textContent = `${goal}%`;
+  }
+
+  const progressBar =
+    document.getElementById("goalProgress");
+
+  const progressText =
+    document.getElementById("goalMessage");
+
+  const records = getRecords();
+
+  if (!progressBar || !progressText) return;
+
+  if (records.length < 2) {
+    progressBar.style.width = "0%";
+    progressText.textContent =
+      "Save at least two records to track your progress.";
+    return;
+  }
+
+  const latest = records[0].daily;
+  const previous = records[1].daily;
+
+  if (previous <= 0) {
+    progressBar.style.width = "0%";
+    return;
+  }
 
   const reduction =
     ((previous - latest) / previous) * 100;
 
-
   const progress =
     Math.max(
       0,
-      Math.min(
-        100,
-        (reduction / goal) * 100
-      )
+      Math.min(100, (reduction / goal) * 100)
     );
 
-
-  document.getElementById("progressText")
-    .textContent =
-    Math.round(reduction) + "%";
-
-
-  document.getElementById("progressBar")
-    .style.width =
-    progress + "%";
-
+  progressBar.style.width = `${progress}%`;
 
   if (reduction >= goal) {
-
-    document.getElementById("goalMessage")
-      .textContent =
-      "You have reached your current reduction target.";
-
+    progressText.textContent =
+      `Great! You've reached your ${goal}% reduction goal.`;
   } else if (reduction > 0) {
-
-    document.getElementById("goalMessage")
-      .textContent =
-      "You're moving in the right direction. Keep working toward your " +
-      goal +
-      "% target.";
-
+    progressText.textContent =
+      `You've reduced estimated use by ${Math.round(reduction)}%. Keep going!`;
   } else {
-
-    document.getElementById("goalMessage")
-      .textContent =
-      "Your latest estimate has not decreased yet. Use the largest-source insight to choose one behavior to change.";
-
+    progressText.textContent =
+      "Your latest estimate is not lower than your previous record yet.";
   }
-
 }
 
-
-// --------------------------------------------
-// Dashboard
-// --------------------------------------------
-
-function updateDashboard() {
-
-  const records =
-    getRecords();
-
-  const goal =
-    getGoal();
-
-
-  document.getElementById("dashboardRecords")
-    .textContent =
-    records.length;
-
-
-  if (records.length === 0) {
-
-    document.getElementById("dashboardDaily")
-      .textContent = "—";
-
-    document.getElementById("dashboardSource")
-      .textContent = "—";
-
-  } else {
-
-    document.getElementById("dashboardDaily")
-      .textContent =
-      formatLitres(records[0].daily);
-
-
-    document.getElementById("dashboardSource")
-      .textContent =
-      getReadableSource(records[0].biggest);
-
+function clearHistory() {
+  if (!confirm("Delete all saved AquaLoop records?")) {
+    return;
   }
 
+  localStorage.removeItem(RECORDS_KEY);
 
-  document.getElementById("dashboardGoal")
-    .textContent =
-    goal
-      ? goal + "%"
-      : "Not set";
+  renderHistory();
 
+  const usage = calculateUsage();
+  updateDashboard(usage);
 }
 
+function setupNavigation() {
+  const links = document.querySelectorAll(
+    'a[href^="#"]'
+  );
 
-// --------------------------------------------
-// Names
-// --------------------------------------------
+  links.forEach(link => {
+    link.addEventListener("click", event => {
+      const targetId =
+        link.getAttribute("href");
 
-function getReadableSource(source) {
+      const target =
+        document.querySelector(targetId);
 
-  const names = {
+      if (target) {
+        event.preventDefault();
 
-    shower: "Shower",
-
-    toilet: "Toilet",
-
-    laundry: "Laundry",
-
-    dishes: "Dishes"
-
-  };
-
-
-  return names[source] || "—";
-
+        target.scrollIntoView({
+          behavior: "smooth"
+        });
+      }
+    });
+  });
 }
 
+function setupButtons() {
+  const calculateButton =
+    document.getElementById("calculateBtn");
 
-// --------------------------------------------
-// Initial load
-// --------------------------------------------
-
-document.addEventListener(
-  "DOMContentLoaded",
-  function() {
-
-    renderHistory();
-
-    updateDashboard();
-
-    updateGoalProgress();
-
-    const savedGoal =
-      getGoal();
-
-    if (savedGoal) {
-
-      document.getElementById("goal")
-        .value = savedGoal;
-
-    }
-
+  if (calculateButton) {
+    calculateButton.addEventListener(
+      "click",
+      updateResults
+    );
   }
-);
+
+  const saveButton =
+    document.getElementById("saveBtn");
+
+  if (saveButton) {
+    saveButton.addEventListener(
+      "click",
+      saveCurrentRecord
+    );
+  }
+
+  const goalButton =
+    document.getElementById("goalBtn");
+
+  if (goalButton) {
+    goalButton.addEventListener(
+      "click",
+      setGoal
+    );
+  }
+
+  const clearButton =
+    document.getElementById("clearHistoryBtn");
+
+  if (clearButton) {
+    clearButton.addEventListener(
+      "click",
+      clearHistory
+    );
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupButtons();
+  setupNavigation();
+  renderHistory();
+  updateResults();
+});
